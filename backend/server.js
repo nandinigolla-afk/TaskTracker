@@ -12,7 +12,10 @@ connectDB();
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || '*',
+  origin: [
+    'http://localhost:3000',
+    process.env.CLIENT_URL,
+  ].filter(Boolean),
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
