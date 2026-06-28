@@ -103,7 +103,7 @@ cd ../frontend && npm install
 PORT=5000
 MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/tasktracker?retryWrites=true&w=majority
 NODE_ENV=development
-CLIENT_URL=http://localhost:3000
+CLIENT_URL=https://task-tracker-roan-tau.vercel.app/
 ```
 
 **Frontend** (`frontend/.env`):
