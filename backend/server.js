@@ -15,10 +15,11 @@ startDeadlineCron();
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    process.env.CLIENT_URL,
-  ].filter(Boolean),
+    'https://task-tracker-roan-tau.vercel.app',
+  ],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }));
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
