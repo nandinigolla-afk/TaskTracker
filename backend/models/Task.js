@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 
 const taskSchema = new mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     title: {
       type: String,
       required: [true, 'Task title is required'],
@@ -39,13 +44,15 @@ const taskSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    deadlineNotified: {
+      type: Boolean,
+      default: false,
+    },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-// Index for faster queries
-taskSchema.index({ status: 1, priority: 1, createdAt: -1 });
+taskSchema.index({ user: 1, status: 1, priority: 1, createdAt: -1 });
+taskSchema.index({ dueDate: 1, deadlineNotified: 1, status: 1 });
 
 module.exports = mongoose.model('Task', taskSchema);

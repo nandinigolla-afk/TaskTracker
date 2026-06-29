@@ -3,48 +3,38 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
+const { startDeadlineCron } = require('./config/cron');
 const taskRoutes = require('./routes/tasks');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 
-// Connect to MongoDB
 connectDB();
+startDeadlineCron();
 
-// Middleware
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://task-tracker-roan-tau.vercel.app',
-  ],
+    process.env.CLIENT_URL,
+  ].filter(Boolean),
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
+if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-}
-
-// Health check
 app.get('/api/health', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Task Tracker API is running',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV,
-  });
+  res.json({ success: true, message: 'Task Tracker API is running', timestamp: new Date().toISOString(), environment: process.env.NODE_ENV });
 });
 
-// Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 
-// 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found` });
 });
 
-// Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({
